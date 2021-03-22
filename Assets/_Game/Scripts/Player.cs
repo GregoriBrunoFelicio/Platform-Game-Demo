@@ -14,7 +14,7 @@ namespace Assets._Game.Scripts
         private bool isJumping;
         private bool faceInRight;
 
-        private void Start()
+        private void Awake()
         {
             speed = 5f;
             jumpForce = 300f;
@@ -36,18 +36,22 @@ namespace Assets._Game.Scripts
 
         private void FlipFace(float horizontal)
         {
-            if ((!(horizontal < 0) || faceInRight) && (!(horizontal > 0) || !faceInRight)) return;
-            faceInRight = !faceInRight;
-            var scale = transform.localScale;
-            scale.x *= -1;
-            transform.localScale = scale;
+            if ((horizontal < 0 && !faceInRight) || (horizontal > 0 && faceInRight))
+            {
+                faceInRight = !faceInRight;
+                var scale = transform.localScale;
+                scale.x *= -1;
+                transform.localScale = scale;
+            }
         }
 
         private void Jumb()
         {
-            if (!Input.GetKeyDown(KeyCode.Space) || isJumping) return;
-            isJumping = true;
-            rgdBody2D.AddForce(transform.up * jumpForce);
+            if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
+            {
+                isJumping = true;
+                rgdBody2D.AddForce(transform.up * jumpForce);
+            }
         }
 
         private void InitializeRigidBody()
@@ -58,7 +62,10 @@ namespace Assets._Game.Scripts
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.CompareTag("Ground")) isJumping = false;
+            if (collision.gameObject.CompareTag("Ground"))
+            {
+                isJumping = false;
+            }
         }
 
         private void OnTriggerEnter2D(Component component)
@@ -69,10 +76,10 @@ namespace Assets._Game.Scripts
 
         private void TakeDamage()
         {
-            if (!(lifeBar.value <= 0))
+            if (lifeBar.value > 0)
             {
-                lifeBar.value -= 10;
-                if (lifeBar.value == 0) ResetGame();
+                lifeBar.value -= 20;
+                if (lifeBar.value <= 0) ResetGame();
             }
             else
             {
