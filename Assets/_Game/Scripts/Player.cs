@@ -9,18 +9,19 @@ namespace Assets._Game.Scripts
         public float speed;
         public float jumpForce;
         public Slider lifeBar;
-        public Slider manaBar;
 
         private Rigidbody2D rgdBody2D;
         private bool isJumping;
         private bool faceInRight;
         private Animator animator;
+        private bool isDefending;
 
         private void Awake()
         {
             speed = 5f;
             jumpForce = 300f;
-            InitializeRigidBody();
+            rgdBody2D = transform.GetComponent<Rigidbody2D>();
+            rgdBody2D.freezeRotation = true;
             animator = transform.GetComponent<Animator>();
         }
 
@@ -29,40 +30,19 @@ namespace Assets._Game.Scripts
             Move();
             Jumb();
             Atack();
-            CastFirePower();
+            Defend();
         }
 
         private void Move()
         {
-            var horizontalInput = Input.GetAxis("Horizontal");
-            transform.Translate(horizontalInput * speed * Time.deltaTime, 0f, 0f);
-            FlipFace(horizontalInput);
-            WalkAnimation(horizontalInput != 0);
-        }
-
-        private void WalkAnimation(bool atack) =>
-
-            animator.SetBool("Walk", atack);
-
-        private void Atack()
-        {
-            if (Input.GetButtonDown("Fire1"))
+            if (!isDefending)
             {
-                animator.SetTrigger("Atack_Sword");
+                var horizontalInput = Input.GetAxis("Horizontal");
+                transform.Translate(horizontalInput * speed * Time.deltaTime, 0f, 0f);
+                FlipFace(horizontalInput);
+                WalkAnimation(horizontalInput != 0);
             }
         }
-
-        private void CastFirePower()
-        {
-            if (Input.GetButtonDown("Fire2") && manaBar.value >= 30)
-            {
-                animator.SetTrigger("Cast_Fire_Power");
-                gameObject.GetComponentInChildren<FirePowerRespawn>().Fire();
-                ConsumeMana();
-            }
-        }
-
-        private void ConsumeMana() => manaBar.value -= 15;
 
         private void FlipFace(float horizontal)
         {
@@ -75,6 +55,23 @@ namespace Assets._Game.Scripts
             }
         }
 
+
+        private void Atack()
+        {
+            if (Input.GetButtonDown("Fire1"))
+            {
+                AtackAnimation();
+            }
+        }
+
+
+        private void Defend()
+        {
+            var defending = Input.GetButton("Fire2");
+            DefenseAnimation(defending);
+            isDefending = defending;
+        }
+
         private void Jumb()
         {
             if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
@@ -84,46 +81,49 @@ namespace Assets._Game.Scripts
             }
         }
 
-        private void InitializeRigidBody()
-        {
-            rgdBody2D = transform.GetComponent<Rigidbody2D>();
-            rgdBody2D.freezeRotation = true;
-        }
-
-
-        private void AddMana() =>
-            manaBar.value += 30;
-
-        private void TakeDamage()
+        private void TakeDamage(int value)
         {
             if (lifeBar.value > 0)
             {
-                lifeBar.value -= 20;
+                lifeBar.value -= value;
                 if (lifeBar.value <= 0) ResetGame();
             }
             else
             {
                 ResetGame();
             }
+            TakeDamageAnimation();
         }
 
         private static void ResetGame() =>
-                SceneManager.LoadScene("SampleScene");
+             SceneManager.LoadScene("SampleScene");
+
+        private void AtackAnimation() => animator.SetTrigger("Atack_Sword");
+
+        private void TakeDamageAnimation() => animator.SetTrigger("Take_Damage");
+
+        private void WalkAnimation(bool atack) =>
+
+            animator.SetBool("Walk", atack);
+
+        private void DefenseAnimation(bool defense) =>
+
+                  animator.SetBool("Defense", defense);
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.CompareTag("Ground"))
-            {
-                isJumping = false;
-            }
+            if (collision.gameObject.CompareTag("Ground")) isJumping = false;
+        }
+
+        private void OnCollisionStay2D(Collision2D collision)
+        {
+            if (collision.gameObject.CompareTag("Enemy")) TakeDamage(1);
         }
 
         private void OnTriggerEnter2D(Component component)
         {
             if (component.gameObject.CompareTag("Limit")) ResetGame();
-            if (component.gameObject.CompareTag("Fire")) TakeDamage();
-            if (component.gameObject.CompareTag("ManaPotion")) AddMana();
+            if (component.gameObject.CompareTag("Fire")) TakeDamage(20);
         }
-
     }
 }

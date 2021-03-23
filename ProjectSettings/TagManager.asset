@@ -8,6 +8,7 @@ TagManager:
   - Limit
   - Fire
   - ManaPotion
+  - Enemy
   layers:
   - Default
   - TransparentFX
