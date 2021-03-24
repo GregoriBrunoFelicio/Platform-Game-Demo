@@ -67,9 +67,17 @@ namespace Assets._Game.Scripts
 
         private void Defend()
         {
-            var defending = Input.GetButton("Fire2");
-            DefenseAnimation(defending);
-            isDefending = defending;
+            if (Input.GetButton("Fire2") && !isJumping)
+            {
+
+                DefenseAnimation(true);
+                isDefending = true;
+            }
+            else
+            {
+                DefenseAnimation(false);
+                isDefending = false;
+            }
         }
 
         private void Jumb()
