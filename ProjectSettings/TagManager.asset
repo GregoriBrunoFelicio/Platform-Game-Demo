@@ -9,6 +9,7 @@ TagManager:
   - Fire
   - ManaPotion
   - Enemy
+  - FireBall
   layers:
   - Default
   - TransparentFX

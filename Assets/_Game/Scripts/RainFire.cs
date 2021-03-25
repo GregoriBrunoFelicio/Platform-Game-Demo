@@ -16,6 +16,5 @@ namespace Assets._Game.Scripts
                 Destroy(gameObject);
             }
         }
-
     }
 }

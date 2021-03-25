@@ -1,6 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Quaternion = UnityEngine.Quaternion;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Assets._Game.Scripts
 {
@@ -9,11 +13,13 @@ namespace Assets._Game.Scripts
         public float speed;
         public float jumpForce;
         public Slider lifeBar;
+        public GameObject fireBall;
 
         private Rigidbody2D rgdBody2D;
+        private Animator animator;
+        private float horizontalInput;
         private bool isJumping;
         private bool faceInRight;
-        private Animator animator;
         private bool isDefending;
 
         private void Awake()
@@ -27,22 +33,37 @@ namespace Assets._Game.Scripts
 
         private void Update()
         {
-            Move();
+            horizontalInput = Input.GetAxis("Horizontal");
             Jumb();
             Atack();
             Defend();
+            LaunchFireBall();
+        }
+
+        private void FixedUpdate()
+        {
+            Move();
         }
 
         private void Move()
         {
             if (!isDefending)
             {
-                var horizontalInput = Input.GetAxis("Horizontal");
-                transform.Translate(horizontalInput * speed * Time.deltaTime, 0f, 0f);
+                rgdBody2D.velocity = new Vector2(horizontalInput * speed, rgdBody2D.velocity.y);
                 FlipFace(horizontalInput);
                 WalkAnimation(horizontalInput != 0);
             }
         }
+
+        private void Jumb()
+        {
+            if (Input.GetKeyDown(KeyCode.Space) && !isJumping && !isDefending)
+            {
+                isJumping = true;
+                rgdBody2D.AddForce(Vector3.up * jumpForce);
+            }
+        }
+
 
         private void FlipFace(float horizontal)
         {
@@ -80,12 +101,15 @@ namespace Assets._Game.Scripts
             }
         }
 
-        private void Jumb()
+        private void LaunchFireBall()
         {
-            if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
+            if (Input.GetKeyDown(KeyCode.E) && !isDefending)
             {
-                isJumping = true;
-                rgdBody2D.AddForce(transform.up * jumpForce);
+                Vector3 direction = Math.Abs(transform.localScale.x - 1f) < 1f ? Vector2.right : Vector2.left;
+                var fire = Instantiate(fireBall, transform.position + direction * 1f, Quaternion.identity);
+                fire.GetComponent<FireBall>().SetRotation(transform);
+                fire.GetComponent<FireBall>().SetDirection(direction);
+                CastFireBallAnimation();
             }
         }
 
@@ -93,6 +117,7 @@ namespace Assets._Game.Scripts
         {
             if (lifeBar.value > 0)
             {
+                TakeDamageAnimation();
                 lifeBar.value -= value;
                 if (lifeBar.value <= 0) ResetGame();
             }
@@ -100,7 +125,6 @@ namespace Assets._Game.Scripts
             {
                 ResetGame();
             }
-            TakeDamageAnimation();
         }
 
         private static void ResetGame() =>
@@ -117,6 +141,8 @@ namespace Assets._Game.Scripts
         private void DefenseAnimation(bool defense) =>
 
                   animator.SetBool("Defense", defense);
+
+        private void CastFireBallAnimation() => animator.SetTrigger("Cast_Fire_Ball");
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
