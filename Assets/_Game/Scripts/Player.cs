@@ -61,6 +61,7 @@ namespace Assets._Game.Scripts
             {
                 isJumping = true;
                 rgdBody2D.AddForce(Vector3.up * jumpForce);
+                JumpAnimation(true);
             }
         }
 
@@ -143,10 +144,15 @@ namespace Assets._Game.Scripts
                   animator.SetBool("Defense", defense);
 
         private void CastFireBallAnimation() => animator.SetTrigger("Cast_Fire_Ball");
+        private void JumpAnimation(bool jumping) => animator.SetBool("Jump", jumping);
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.CompareTag("Ground")) isJumping = false;
+            if (collision.gameObject.CompareTag("Ground"))
+            {
+                isJumping = false;
+                JumpAnimation(false);
+            }
         }
 
         private void OnCollisionStay2D(Collision2D collision)
