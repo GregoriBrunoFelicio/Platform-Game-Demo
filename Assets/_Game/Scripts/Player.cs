@@ -13,6 +13,7 @@ namespace Assets._Game.Scripts
         public float speed;
         public float jumpForce;
         public Slider lifeBar;
+        public Slider manaBar;
         public GameObject fireBall;
 
         private Rigidbody2D rgdBody2D;
@@ -25,7 +26,7 @@ namespace Assets._Game.Scripts
         private void Awake()
         {
             speed = 5f;
-            jumpForce = 300f;
+            jumpForce = 400f;
             rgdBody2D = transform.GetComponent<Rigidbody2D>();
             rgdBody2D.freezeRotation = true;
             animator = transform.GetComponent<Animator>();
@@ -33,23 +34,19 @@ namespace Assets._Game.Scripts
 
         private void Update()
         {
-            horizontalInput = Input.GetAxis("Horizontal");
+            Move();
             Jumb();
             Atack();
             Defend();
             LaunchFireBall();
         }
 
-        private void FixedUpdate()
-        {
-            Move();
-        }
-
         private void Move()
         {
             if (!isDefending)
             {
-                rgdBody2D.velocity = new Vector2(horizontalInput * speed, rgdBody2D.velocity.y);
+                horizontalInput = Input.GetAxis("Horizontal");
+                transform.Translate(horizontalInput * speed * Time.deltaTime, 0f, 0f);
                 FlipFace(horizontalInput);
                 WalkAnimation(horizontalInput != 0);
             }
@@ -104,13 +101,14 @@ namespace Assets._Game.Scripts
 
         private void LaunchFireBall()
         {
-            if (Input.GetKeyDown(KeyCode.E) && !isDefending)
+            if (Input.GetKeyDown(KeyCode.E) && !isDefending && manaBar.value >= 20)
             {
                 Vector3 direction = Math.Abs(transform.localScale.x - 1f) < 1f ? Vector2.right : Vector2.left;
                 var fire = Instantiate(fireBall, transform.position + direction * 1f, Quaternion.identity);
                 fire.GetComponent<FireBall>().SetRotation(transform);
                 fire.GetComponent<FireBall>().SetDirection(direction);
                 CastFireBallAnimation();
+                SpendMana(10);
             }
         }
 
@@ -144,7 +142,10 @@ namespace Assets._Game.Scripts
                   animator.SetBool("Defense", defense);
 
         private void CastFireBallAnimation() => animator.SetTrigger("Cast_Fire_Ball");
+
         private void JumpAnimation(bool jumping) => animator.SetBool("Jump", jumping);
+
+        private void SpendMana(int amount) => manaBar.value -= amount;
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
