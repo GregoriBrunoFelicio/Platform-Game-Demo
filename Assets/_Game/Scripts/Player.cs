@@ -15,6 +15,8 @@ namespace Assets._Game.Scripts
         public Slider lifeBar;
         public Slider manaBar;
         public GameObject fireBall;
+        public Transform atackPoint;
+        public LayerMask enemyLayers;
 
         private Rigidbody2D rgdBody2D;
         private Animator animator;
@@ -77,9 +79,13 @@ namespace Assets._Game.Scripts
 
         private void Atack()
         {
-            if (Input.GetButtonDown("Fire1"))
+            if (!Input.GetButtonDown("Fire1")) return;
+            AtackAnimation();
+            var hitEnemies = Physics2D.OverlapCircleAll(atackPoint.position, 0.5f, enemyLayers);
+
+            foreach (var enemy in hitEnemies)
             {
-                AtackAnimation();
+                enemy.GetComponent<Enemy>().TakeDamage(20);
             }
         }
 
@@ -112,18 +118,11 @@ namespace Assets._Game.Scripts
             }
         }
 
-        private void TakeDamage(int value)
+        private void TakeDamage(int damage)
         {
-            if (lifeBar.value > 0)
-            {
-                TakeDamageAnimation();
-                lifeBar.value -= value;
-                if (lifeBar.value <= 0) ResetGame();
-            }
-            else
-            {
-                ResetGame();
-            }
+            TakeDamageAnimation();
+            lifeBar.value -= damage;
+            if (lifeBar.value <= 0) ResetGame();
         }
 
         private static void ResetGame() =>
@@ -158,7 +157,7 @@ namespace Assets._Game.Scripts
 
         private void OnCollisionStay2D(Collision2D collision)
         {
-            if (collision.gameObject.CompareTag("Enemy")) TakeDamage(1);
+            //  if (collision.gameObject.CompareTag("Enemy")) TakeDamage(1);
         }
 
         private void OnTriggerEnter2D(Component component)
