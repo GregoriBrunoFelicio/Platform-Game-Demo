@@ -5,13 +5,11 @@ namespace Assets._Game.Scripts
 {
     public class Enemy : MonoBehaviour
     {
-
-
         public float maxHelth = 100;
+        public Slider lifeBar;
 
         private float currentHelth;
         private Animator animator;
-        public Slider lifeBar;
 
 
         private void Awake()
@@ -21,14 +19,9 @@ namespace Assets._Game.Scripts
             currentHelth = maxHelth;
         }
 
-        private void Update()
-        {
-        }
-
         public void TakeDamage(float damage)
         {
-            animator.SetTrigger("Atack");
-
+            AtackAnimation();
             currentHelth -= damage;
             lifeBar.value = currentHelth;
 
@@ -40,21 +33,17 @@ namespace Assets._Game.Scripts
 
         private void Die()
         {
-            animator.SetBool("Died", true);
+            DieAnimation(true);
             GetComponent<Collider2D>().enabled = false;
             enabled = false;
-
         }
 
-        //private void Atack()
-        //{
-        //    animator.SetTrigger("Atack");
-        //}
+        private void AtackAnimation() =>
 
-        //private void OnCollisionStay2D(Collision2D collision)
-        //{
-        //    if (collision.gameObject.CompareTag("Player")) Atack();
-        //}
+            animator.SetTrigger("Atack");
+
+        private void DieAnimation(bool die) =>
+            animator.SetBool("Died", die);
 
     }
 }

@@ -18,12 +18,13 @@ namespace Assets._Game.Scripts
         public Transform atackPoint;
         public LayerMask enemyLayers;
 
-        private Rigidbody2D rgdBody2D;
-        private Animator animator;
         private float horizontalInput;
         private bool isJumping;
         private bool faceInRight;
         private bool isDefending;
+        private Rigidbody2D rgdBody2D;
+        private Animator animator;
+
 
         private void Awake()
         {
@@ -79,13 +80,15 @@ namespace Assets._Game.Scripts
 
         private void Atack()
         {
-            if (!Input.GetButtonDown("Fire1")) return;
-            AtackAnimation();
-            var hitEnemies = Physics2D.OverlapCircleAll(atackPoint.position, 0.5f, enemyLayers);
-
-            foreach (var enemy in hitEnemies)
+            if (Input.GetButtonDown("Fire1"))
             {
-                enemy.GetComponent<Enemy>().TakeDamage(20);
+                AtackAnimation();
+                var hitEnemies = Physics2D.OverlapCircleAll(atackPoint.position, 0.5f, enemyLayers);
+
+                foreach (var enemy in hitEnemies)
+                {
+                    enemy.GetComponent<Enemy>().TakeDamage(20);
+                }
             }
         }
 
@@ -155,15 +158,12 @@ namespace Assets._Game.Scripts
             }
         }
 
-        private void OnCollisionStay2D(Collision2D collision)
-        {
-            //  if (collision.gameObject.CompareTag("Enemy")) TakeDamage(1);
-        }
 
         private void OnTriggerEnter2D(Component component)
         {
             if (component.gameObject.CompareTag("Limit")) ResetGame();
             if (component.gameObject.CompareTag("Fire")) TakeDamage(20);
+            if (component.gameObject.CompareTag("Enemy")) TakeDamage(1);
         }
     }
 }
