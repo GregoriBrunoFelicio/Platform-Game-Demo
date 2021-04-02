@@ -6,18 +6,29 @@ namespace Assets._Game.Scripts
     public class Enemy : MonoBehaviour
     {
         public float maxHelth = 100;
-        public Slider lifeBar;
+        public Transform playerPosition;
 
         private float currentHelth;
         private Animator animator;
+        private Slider lifeBar;
+        private SpriteRenderer spriteRenderer;
 
 
         private void Awake()
         {
             animator = transform.GetComponent<Animator>();
             lifeBar = transform.GetComponentInChildren<Slider>();
+            spriteRenderer = GetComponent<SpriteRenderer>();
+
             currentHelth = maxHelth;
         }
+
+        private void Update()
+        {
+            FlipFace();
+        }
+
+        private void FlipFace() => spriteRenderer.flipX = playerPosition.transform.position.x < transform.position.x;
 
         public void TakeDamage(float damage)
         {
@@ -36,7 +47,9 @@ namespace Assets._Game.Scripts
             DieAnimation(true);
             GetComponent<Collider2D>().enabled = false;
             enabled = false;
+            Destroy(gameObject, 3f);
         }
+
 
         private void AtackAnimation() =>
 

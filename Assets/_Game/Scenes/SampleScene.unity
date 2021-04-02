@@ -941,6 +941,12 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 5106780926230594852}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1405212800 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5106780927585344863, guid: 218be80330956aa49ad0df09409f5e74,
+    type: 3}
+  m_PrefabInstance: {fileID: 5106780926230594852}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1454080474
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1679,6 +1685,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1408586131, guid: c26316882414d1f409d6a0748cf53794, type: 3}
+      propertyPath: playerPosition
+      value: 
+      objectReference: {fileID: 1405212800}
     - target: {fileID: 795517483471529654, guid: c26316882414d1f409d6a0748cf53794,
         type: 3}
       propertyPath: m_Name
@@ -1687,12 +1697,12 @@ PrefabInstance:
     - target: {fileID: 795517483471529659, guid: c26316882414d1f409d6a0748cf53794,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.61
+      value: 6.1
       objectReference: {fileID: 0}
     - target: {fileID: 795517483471529659, guid: c26316882414d1f409d6a0748cf53794,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.2
+      value: -2.17
       objectReference: {fileID: 0}
     - target: {fileID: 795517483471529659, guid: c26316882414d1f409d6a0748cf53794,
         type: 3}
@@ -1817,10 +1827,19 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1450193808, guid: 218be80330956aa49ad0df09409f5e74, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5106780927585344862, guid: 218be80330956aa49ad0df09409f5e74,
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5106780927585344862, guid: 218be80330956aa49ad0df09409f5e74,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5106780927585344863, guid: 218be80330956aa49ad0df09409f5e74,
         type: 3}
@@ -1887,11 +1906,6 @@ PrefabInstance:
       propertyPath: manaBar
       value: 
       objectReference: {fileID: 1660071368}
-    - target: {fileID: 5106780927585344932, guid: 218be80330956aa49ad0df09409f5e74,
-        type: 3}
-      propertyPath: enemyLayers.m_Bits
-      value: 256
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 218be80330956aa49ad0df09409f5e74, type: 3}
 --- !u!1001 &6631680521014706719
