@@ -26,6 +26,23 @@ namespace Assets._Game.Scripts
         private void Update()
         {
             FlipFace();
+            Walk();
+        }
+
+        private void Walk()
+        {
+            var distance = Vector2.Distance(transform.position, playerPosition.position);
+
+            if (distance <= 5)
+            {
+                transform.position =
+                    Vector3.MoveTowards(transform.position, playerPosition.position, 2 * Time.deltaTime);
+                animator.SetBool("Walk", true);
+            }
+            else
+            {
+                animator.SetBool("Walk", false);
+            }
         }
 
         private void FlipFace() => spriteRenderer.flipX = playerPosition.transform.position.x < transform.position.x;
